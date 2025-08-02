@@ -1,0 +1,6 @@
+@Samkong_HostAddress = http://localhost:5127
+
+GET {{Samkong_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
