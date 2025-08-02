@@ -14,13 +14,13 @@ namespace Samkong.Repo
     {
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
-        private readonly IWebHostEnvironment env;
+        private readonly IWebHostEnvironment _env;
 
-        public EmployeeRepository(ApplicationDbContext context,IMapper mapper, IWebHostEnvironment env)
+        public EmployeeRepository(ApplicationDbContext context,IMapper mapper, IWebHostEnvironment Env)
         {
             _context = context;
             _mapper = mapper;
-            this.env = env;
+            _env = Env;
         }
         public async Task<IEnumerable<Employee>> GetEmployees()
         {
@@ -45,7 +45,7 @@ namespace Samkong.Repo
                 {
                     fileName = Guid.NewGuid().ToString() + Path.GetExtension(fileName);
                     var subFolder = "People";
-                    string storeFileDirectory = Path.Combine(env.WebRootPath, subFolder);
+                    string storeFileDirectory = Path.Combine(_env.WebRootPath, subFolder);
                     if (!Directory.Exists(storeFileDirectory))
                     {
                         Directory.CreateDirectory(storeFileDirectory);
