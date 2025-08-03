@@ -67,10 +67,10 @@ namespace Samkong.Service
             {
                 query = query.Where(x => x.Status == model.Status);
             }
-          /*  else
+            else
             {
                 query = query.Where(x => x.Status == 0);
-            }*/
+            }
             var result = await query.OrderByDescending(x=>x.CreateDate).ToListAsync();
             return result;
         }

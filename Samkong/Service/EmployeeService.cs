@@ -10,12 +10,12 @@ namespace Samkong.Service
     {
         private readonly IUnitOfWork _unit;
         private readonly IMapper _mapper;
-        private readonly IWebHostEnvironment env;
-        public EmployeeService(IUnitOfWork unit,IMapper mapper, IWebHostEnvironment web)
+        private readonly IWebHostEnvironment _env;
+        public EmployeeService(IUnitOfWork unit,IMapper mapper, IWebHostEnvironment env)
         {
             _unit = unit;
             _mapper = mapper;
-            env = web;
+            _env = env;
         }
         public async Task<IEnumerable<Employee>> GetAll()
         {
@@ -62,7 +62,7 @@ namespace Samkong.Service
             _mapper.Map(model,user);
                 if (!string.IsNullOrEmpty(user.picture))
                 {
-                    string oldPath = Path.Combine(env.WebRootPath, user.picture.Replace("/", Path.DirectorySeparatorChar.ToString()));
+                    string oldPath = Path.Combine(_env.WebRootPath, user.picture.Replace("/", Path.DirectorySeparatorChar.ToString()));
                     if (System.IO.File.Exists(oldPath))
                     {
                         System.IO.File.Delete(oldPath);
@@ -72,7 +72,7 @@ namespace Samkong.Service
                 var FileName = model.Picture!.FileName;
                 FileName = Guid.NewGuid().ToString() + Path.GetExtension(FileName);
                 var subFolder = "People";
-                string storeFileDirectory = Path.Combine(env.WebRootPath, subFolder);
+                string storeFileDirectory = Path.Combine(_env.WebRootPath, subFolder);
                 if (!Directory.Exists(storeFileDirectory))
                 {
                     Directory.CreateDirectory(storeFileDirectory);
