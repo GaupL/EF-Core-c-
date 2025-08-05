@@ -26,10 +26,16 @@ namespace Samkong.Controllers
         {
             return Ok(await _service.GetAllV2(model));
         }
-        [HttpGet("{id}",Name ="GetByIdEmp")]
+        //[HttpGet("{id}",Name ="GetByIdEmp")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> getById(string id)
         {
-            return Ok(await _service.getById(id));
+            var result = await _service.getById(id);
+            if(result == null)
+            {
+                return NotFound();
+            }
+            return Ok(result);
         }
 
         [HttpPost]
@@ -42,14 +48,22 @@ namespace Samkong.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> update([FromForm] EmployeeDTO model, string id)
         {
-            await _service.Update(id, model);
-            return Ok();
+          var User =   await _service.Update(id, model);
+            if (!User)
+            {
+                return NotFound();
+            }
+            return NoContent();
         }
         [HttpDelete("{id}")]
         public async Task<IActionResult> delete(string id)
         {
-           await  _service.Deleted(id);
-            return Ok();
+          var deleted = await  _service.Deleted(id);
+            if (!deleted)
+            {
+                return NotFound();
+            }
+            return NoContent();
         }
     }
 }

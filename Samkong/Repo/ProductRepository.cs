@@ -66,17 +66,16 @@ namespace Samkong.Repo
            }).AsQueryable();
 
         }
-        public async Task<Product> getById(string id)
+        public async Task<Product> GetById(string id)
         {
-            return await _context.Products.FindAsync(id);
+            return  await _context.Products.FirstOrDefaultAsync(x=>x.ProductId == id);
         }
-        public async Task CreateAsync(ProductDto model)
+        public async Task<Product> CreateAsync(ProductDto model)
         {
             var models = _mapper.Map<Product>(model);
-              models.CreateDate = DateTime.Now;
-              models.MonthId = Convert.ToDateTime(models.CreateDate).Month;
             await _context.Products.AddAsync(models);
-        }
+            return models;
+        }   
         public void UpdateAsync(Product model)
         {
             _context.Products.Update(model);

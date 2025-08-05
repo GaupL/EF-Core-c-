@@ -74,18 +74,21 @@ namespace Samkong.Service
             var result = await query.OrderByDescending(x=>x.CreateDate).ToListAsync();
             return result;
         }
-        public async Task<Product>getById(string id)
+        public async Task<Product>GetById(string id)
         {
-            return await _uow.Product.getById(id);
+            return await _uow.Product.GetById(id);
         }
-        public async Task CreatePro(ProductDto model)
+        public async Task<Product> CreatePro(ProductDto model)
         {
-            await _uow.Product.CreateAsync(model);
+           var result =  await _uow.Product.CreateAsync(model);
+            result.CreateDate = DateTime.Now;
+            result.MonthId = Convert.ToDateTime(result.CreateDate).Month;
             await _uow.SaveChangesAsync();
+            return result;
         }
         public async Task<bool> UpdatePro(ProductDto model,string id)
         {
-            var user = await _uow.Product.getById(id);
+            var user = await _uow.Product.GetById(id);
             if (user == null) return false;
             user.UpdateDate= DateTime.Now;
             user.MonthId = user.MonthId;
@@ -96,7 +99,7 @@ namespace Samkong.Service
         }
         public async Task<bool> Delete(string id)
         {
-            var User = await _uow.Product.getById(id);
+            var User = await _uow.Product.GetById(id);
             if (User == null) return false;
             _uow.Product.Deleted(User);
             await _uow.SaveChangesAsync();

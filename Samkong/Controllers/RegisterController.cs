@@ -35,6 +35,10 @@ namespace Samkong.Controllers
         public async Task<ActionResult<RegisterDTO>> getById(string id)
         {
             var user = await _context.Registers.FindAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
             var model = new RegisterDTO()
             {
                 NickName= user.NickName,

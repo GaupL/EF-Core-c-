@@ -29,7 +29,12 @@ namespace Samkong.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> getById(string id)
         {
-            return Ok(await _service.getById(id));
+            var User = await _service.GetById(id);
+            if(User == null)
+            {
+                return NotFound();
+            }
+            return Ok(User);
         }
         [HttpGet("V4")]
         public async Task<ActionResult<IEnumerable<ProductDTO1>>> getV4([FromQuery] ProductDTOSearch model)
@@ -44,20 +49,28 @@ namespace Samkong.Controllers
         [HttpPost]
         public async Task<IActionResult> post([FromBody] ProductDto model)
         {
-            await _service.CreatePro(model);
-            return Ok();
+           var User =  await _service.CreatePro(model);
+            return CreatedAtAction(nameof(getById),new {id = User.ProductId},User);
         }
         [HttpDelete("{id}")]
         public async Task<IActionResult> delete(string id)
         {
-            await _service.Delete(id);
-            return Ok();
+          var deleted =  await _service.Delete(id);
+            if (!deleted)
+            {
+                return NotFound();
+            }
+            return NoContent();
         }
         [HttpPut("{id}")]
-        public async Task<IActionResult> update(ProductDto model,string id)
+        public async Task<IActionResult> update([FromBody]ProductDto model,string id)
         {
-            await _service.UpdatePro(model,id);
-            return Ok();
+          var User =  await _service.UpdatePro(model,id);
+            if(!User)
+            {
+                return NotFound();
+            }
+            return NoContent();
         }
     }
 }
