@@ -86,9 +86,9 @@ namespace Samkong.Service
             await _uow.SaveChangesAsync();
             return result;
         }
-        public async Task<bool> UpdatePro(ProductDto model,string Id)
+        public async Task<bool> UpdatePro(ProductDto model,string id)
         {
-            var user = await _uow.Product.GetById(Id);
+            var user = await _uow.Product.GetById(id);
             if (user == null) return false;
             user.UpdateDate= DateTime.Now;
             user.MonthId = user.MonthId;
