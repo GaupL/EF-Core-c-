@@ -58,9 +58,8 @@ namespace Samkong.Service
         {
             var user = await _unit.Employee.getById(id);
             if (user == null) return false;
-            user.Updatedate = DateTime.Now;
             _mapper.Map(model,user);
-                if (!string.IsNullOrEmpty(user.picture))
+            if (!string.IsNullOrEmpty(user.picture))
                 {
                     string oldPath = Path.Combine(_env.WebRootPath, user.picture.Replace("/", Path.DirectorySeparatorChar.ToString()));
                     if (System.IO.File.Exists(oldPath))
@@ -68,25 +67,39 @@ namespace Samkong.Service
                         System.IO.File.Delete(oldPath);
                     }
                 }
-        
+            if(model.Picture != null)
+            {
                 var FileName = model.Picture!.FileName;
-                FileName = Guid.NewGuid().ToString() + Path.GetExtension(FileName);
-                var subFolder = "People";
-                string storeFileDirectory = Path.Combine(_env.WebRootPath, subFolder);
-                if (!Directory.Exists(storeFileDirectory))
+                if (!string.IsNullOrEmpty(FileName))
                 {
-                    Directory.CreateDirectory(storeFileDirectory);
+                    FileName = Guid.NewGuid().ToString() + Path.GetExtension(FileName);
+                    var subFolder = "People";
+                    string storeFileDirectory = Path.Combine(_env.WebRootPath, subFolder);
+                    if (!Directory.Exists(storeFileDirectory))
+                    {
+                        Directory.CreateDirectory(storeFileDirectory);
+                    }
+                    string filePath = Path.Combine(storeFileDirectory, FileName);
+                    using (var ms = new MemoryStream())
+                    {
+                        await model.Picture.CopyToAsync(ms);
+                        var content = ms.ToArray();
+                        await System.IO.File.WriteAllBytesAsync(filePath, content);
+                    }
+                    user.picture = Path.Combine(subFolder, FileName).Replace("\\", "/");
                 }
-                string filePath = Path.Combine(storeFileDirectory, FileName);
-                using (var ms = new MemoryStream())
+                else
                 {
-                    await model.Picture.CopyToAsync(ms);
-                    var content = ms.ToArray();
-                    await System.IO.File.WriteAllBytesAsync(filePath, content);
+                    user.picture = null;
                 }
-                user.picture = Path.Combine(subFolder, FileName).Replace("\\", "/");
-            
-                _unit.Employee.Update(user);
+            }
+            else
+            {
+                user.picture = null;
+            }
+            user.Updatedate = DateTime.Now;
+
+            _unit.Employee.Update(user);
             await _unit.SaveChangesAsync();
             return true;
         }

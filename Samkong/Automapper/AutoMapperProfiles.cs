@@ -19,6 +19,7 @@ namespace Samkong.AutomapperProfile
                 .ForMember(data => data.Createdate, opt => opt.Ignore())
                 .ForMember(data => data.Updatedate, opt => opt.Ignore());
             CreateMap<RegisterDTO,Register>();
+            CreateMap<Register, RegisterDTO>();
         }
     }
 }

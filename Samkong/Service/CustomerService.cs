@@ -35,7 +35,7 @@ namespace Samkong.Service
             {
                 query = query.Where(x => x.Address.Contains(model.Address));
             }
-            var result =  await query.OrderBy(x=>x.Createdate).ToListAsync();
+            var result =  await query.OrderByDescending(x=>x.Createdate).ToListAsync();
             return result;
         }
         public async Task<Customer> getById(string id)

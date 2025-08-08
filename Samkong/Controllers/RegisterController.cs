@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -19,11 +20,13 @@ namespace Samkong.Controllers
         private readonly UserManager<Register> _manager;
         private readonly IConfiguration _config;
         private readonly ApplicationDbContext _context;
-        public RegisterController(UserManager<Register> manager, IConfiguration config, ApplicationDbContext context)
+        private readonly IMapper _mapper;
+        public RegisterController(UserManager<Register> manager, IConfiguration config, ApplicationDbContext context,IMapper mapper)
         {
             _manager = manager;
             _config=config;
             _context = context;
+            _mapper = mapper;
         }
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Register>>> get()
@@ -46,6 +49,28 @@ namespace Samkong.Controllers
                 Email=user.Email,
             };
             return Ok(model);
+        }
+        [HttpGet("GetPerson/{id}")]
+        public async Task<ActionResult> GetPerson(string id)
+        {
+            var result = await _context.Registers.FindAsync(id);
+            if (result == null)
+            {
+                return NotFound();
+            }
+         var person =   await (from u in _context.Registers
+                   join ur in _context.UserRoles on u.Id equals ur.UserId
+                   join r in _context.Roles on ur.RoleId equals r.Id
+                   select new PersonDTO()
+                   {
+                       Address = u.Address,
+                       Fullname=u.FulllName,
+                       Name=u.NickName,
+                       role=r.Name,
+                       User=u.Email,
+                       UserId= u.Id
+                   }).Where(x=>x.UserId == id).FirstOrDefaultAsync();
+            return Ok(person);
         }
         [HttpPost]
         public async Task<IActionResult> Create(RegisterDTO model)
@@ -102,6 +127,17 @@ namespace Samkong.Controllers
                 return Ok(new { token });
             }
             return BadRequest();
+        }
+        [HttpPost("changePassword/{id}")]
+        public async Task<ActionResult> changPass([FromBody]ChangePassword model,string id)
+        {
+            var user = await _manager.FindByIdAsync(id);
+           var result = await _manager.ChangePasswordAsync(user,model.Password,model.NewPassword);
+            if(!result.Succeeded)
+            {
+                return NotFound();
+            }
+            return Ok(new { message = "Password changed successfully" });
         }
     }
 }
