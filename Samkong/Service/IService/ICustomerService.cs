@@ -11,5 +11,6 @@ namespace Samkong.Service.IService
         Task<IEnumerable<Customer>> GetAll();
         Task<bool> Update(string id, CustomerDTO model);
         Task<Customer> getById(string id);
+        Task<IEnumerable<Customer>> getAllDdl();
     }
 }

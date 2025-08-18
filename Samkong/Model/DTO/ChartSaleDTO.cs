@@ -8,7 +8,7 @@
         public string? NameCus { get; set; }
         //  public string? CusId { get; set; }
     }
-    public class SamaryCus
+    public class SummaryCus
     {
         public string? CusId { get; set; }
         public string? Year { get; set; }

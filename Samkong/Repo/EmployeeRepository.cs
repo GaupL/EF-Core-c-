@@ -26,6 +26,10 @@ namespace Samkong.Repo
         {
             return await _context.Employees.OrderByDescending(x=>x.Createdate).ToListAsync();
         }
+        public async Task<IQueryable<Employee>> GetEmployeesSearch()
+        {
+            return _context.Employees.AsQueryable();
+        }
         public async Task<IQueryable<Employee>> GetEmployees2(EmployeeDTOSearch model)
         {
             return _context.Employees.AsQueryable();
@@ -69,9 +73,7 @@ namespace Samkong.Repo
             {
                 Emp.picture = null;
             }
-
-
-                Emp.Createdate = DateTime.Now;
+             Emp.Createdate = DateTime.Now;
             await _context.Employees.AddAsync(Emp);
         }
         public void Update(Employee model)

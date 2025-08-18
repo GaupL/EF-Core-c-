@@ -6,6 +6,7 @@ namespace Samkong.Repo.RepoService
     public interface IEmployeeRepository
     {
         Task AddAsync(EmployeeDTO model);
+        Task<IQueryable<Employee>> GetEmployeesSearch();
         void Deleted(Employee model);
         Task<IEnumerable<Employee>> GetEmployees();
         Task<Employee> getById(string id);

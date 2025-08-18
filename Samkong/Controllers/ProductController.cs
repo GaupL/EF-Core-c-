@@ -42,7 +42,7 @@ namespace Samkong.Controllers
             return Ok(await _service.getSearchV2(model));
         }
         [HttpGet("Chart")]
-        public async Task<IActionResult> getAllChart([FromQuery] SamaryCus model)
+        public async Task<IActionResult> getAllChart([FromQuery] SummaryCus model)
         {
             return Ok(await _service.GetSaleChart(model));
         }

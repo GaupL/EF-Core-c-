@@ -11,7 +11,7 @@ namespace Samkong.Service.IService
         Task<bool> UpdatePro(ProductDto model, string id);
         Task<Product> GetById(string id);
         Task<IEnumerable<ProductDTO1>> getSearchV2(ProductDTOSearch model);
-        Task<IEnumerable<ChartSaleDTO>> GetSaleChart(SamaryCus model);
+        Task<IEnumerable<ChartSaleDTO>> GetSaleChart(SummaryCus model);
        // Task<IEnumerable<ChartSaleDTO>> GetSaleChartV1();
     }
 }

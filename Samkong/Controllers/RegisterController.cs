@@ -20,13 +20,11 @@ namespace Samkong.Controllers
         private readonly UserManager<Register> _manager;
         private readonly IConfiguration _config;
         private readonly ApplicationDbContext _context;
-        private readonly IMapper _mapper;
-        public RegisterController(UserManager<Register> manager, IConfiguration config, ApplicationDbContext context,IMapper mapper)
+        public RegisterController(UserManager<Register> manager, IConfiguration config, ApplicationDbContext context, IMapper mapper)
         {
             _manager = manager;
-            _config=config;
+            _config = config;
             _context = context;
-            _mapper = mapper;
         }
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Register>>> get()
@@ -35,14 +33,14 @@ namespace Samkong.Controllers
             return Ok();
         }
         [HttpGet("{id}")]
-        public async Task<ActionResult<RegisterDTO>> getById(string id)
+        public async Task<ActionResult<RegisterDTOV2>> getById(string id)
         {
             var user = await _context.Registers.FindAsync(id);
             if (user == null)
             {
                 return NotFound();
             }
-            var model = new RegisterDTO()
+            var model = new RegisterDTOV2()
             {
                 NickName= user.NickName,
                 Name=user.UserName,
@@ -75,7 +73,7 @@ namespace Samkong.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(RegisterDTO model)
         {
-            Register models = new Register()
+          Register models = new Register()
             {
                 FulllName= model.Name,
                 NickName = model.NickName,
@@ -86,7 +84,7 @@ namespace Samkong.Controllers
             };
             var result = await _manager.CreateAsync(models,model.Password!);
             await _manager.AddToRoleAsync(models, model.Role!);
-            if(result.Succeeded)
+            if (result.Succeeded)
             {
                 return Ok();
             }
@@ -106,16 +104,29 @@ namespace Samkong.Controllers
                 var roles = await _manager.GetRolesAsync(user);
                 var signingKey = new SymmetricSecurityKey(
                     Encoding.UTF8.GetBytes(_config["AppSettings:JWTSecret"]!));
-                ClaimsIdentity claims = new ClaimsIdentity(new Claim[]
+                var claims = new List<Claim>()
                 {
                     new Claim("User",user.Email.ToString()),
                     new Claim("Name",user.NickName.ToString()),
                     new Claim("UserId",user.Id.ToString()),
-                    new Claim(ClaimTypes.Role,roles.First())
-                });
+                };
+                foreach (var role in roles)
+                {
+                    claims.Add(new Claim(ClaimTypes.Role, role));
+                }
+                /*   ClaimsIdentity claims = new ClaimsIdentity(new Claim[]
+                   {
+                       new Claim("User",user.Email.ToString()),
+                       new Claim("Name",user.NickName.ToString()),
+                       new Claim("UserId",user.Id.ToString()),
+
+                       new Claim(ClaimTypes.Role,roles.First())
+
+                   });*/
+                var Claims = new ClaimsIdentity(claims);
                 var tokenDescriptor = new SecurityTokenDescriptor
                 {
-                    Subject = claims,
+                    Subject = Claims,
                     Expires = DateTime.UtcNow.AddHours(4),
                     SigningCredentials = new SigningCredentials(
                         signingKey,

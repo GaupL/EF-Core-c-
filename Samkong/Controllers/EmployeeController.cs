@@ -37,13 +37,17 @@ namespace Samkong.Controllers
             }
             return Ok(result);
         }
+        [HttpGet("ddl")]
+        public async Task<IActionResult> getddl()
+        {
+            return Ok(await _service.getAllDdl());
+        }
 
         [HttpPost]
         public async Task<IActionResult> post([FromForm] EmployeeDTO model)
         {
             await _service.CreateAsync1(model);
             return Ok();
-          //  return CreatedAtAction("GetByIdEmp",new {id = model.Name},model);
         }
         [HttpPut("{id}")]
         public async Task<IActionResult> update([FromForm] EmployeeDTO model, string id)

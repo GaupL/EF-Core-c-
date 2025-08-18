@@ -20,7 +20,7 @@ namespace Samkong.Service
         {
             return await _uow.Product.getProducts();
         }
-        public async Task<IEnumerable<ChartSaleDTO>> GetSaleChart(SamaryCus model)
+        public async Task<IEnumerable<ChartSaleDTO>> GetSaleChart(SummaryCus model)
         {
             var months =await _uow.Product.getMonths();
             var products=await _uow.Product.getProducts();
@@ -32,7 +32,7 @@ namespace Samkong.Service
             {
                 products = products.Where(p=>p.CreateDate.Year.ToString() == model.Year);
             }
-            var result = months.GroupJoin(products,
+            var result =  months.GroupJoin(products,
                 m=>m.MonthId,
                 p=>p.MonthId,
                 (m,group)=> new ChartSaleDTO()
@@ -40,6 +40,7 @@ namespace Samkong.Service
                     MonthId=m.MonthId,
                     MonthName=m.MonthName,
                     Price = group.Sum(a=>a.Price),
+
                 }).OrderBy(o=>o.MonthId).ToList();
 
             return result;

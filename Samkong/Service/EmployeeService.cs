@@ -21,6 +21,12 @@ namespace Samkong.Service
         {
             return await _unit.Employee.GetEmployees();
         }
+        public async Task<IEnumerable<Employee>> getAllDdl()
+        {
+            var query = await _unit.Employee.GetEmployeesSearch();
+            return await query.OrderBy(x => x.Name).ToListAsync();
+        }
+        
         public async Task<Employee> getById(string id)
         {
             return await _unit.Employee.getById(id);
@@ -30,7 +36,7 @@ namespace Samkong.Service
         {
             int NewAge = Convert.ToInt16(model.Age);
             int NewToAge = Convert.ToInt16(model.ToAge);
-            var Query = await _unit.Employee.GetEmployees2(model);
+            var Query = await _unit.Employee.GetEmployeesSearch();
 
             if (!string.IsNullOrEmpty(model.Name))
             {
@@ -87,10 +93,6 @@ namespace Samkong.Service
                         await System.IO.File.WriteAllBytesAsync(filePath, content);
                     }
                     user.picture = Path.Combine(subFolder, FileName).Replace("\\", "/");
-                }
-                else
-                {
-                    user.picture = null;
                 }
             }
             else

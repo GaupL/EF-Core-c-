@@ -66,9 +66,10 @@ namespace Samkong.Repo
            }).AsQueryable();
 
         }
-        public async Task<Product> GetById(string id)
+        public async Task<Product?> GetById(string id)
         {
             return  await _context.Products.FirstOrDefaultAsync(x=>x.ProductId == id);
+
         }
         public async Task<Product> CreateAsync(ProductDto model)
         {

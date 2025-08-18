@@ -20,6 +20,11 @@ namespace Samkong.Controllers
         {
           return Ok(await _service.GetAll());
         }
+        [HttpGet("ddl")]
+        public async Task<IActionResult> getddl()
+        {
+            return Ok(await _service.getAllDdl());
+        }
         [HttpGet("v2")]
         public async Task<IActionResult> getSearch([FromQuery]CustomerDTOSearch model)
         {
@@ -43,7 +48,7 @@ namespace Samkong.Controllers
             return Ok();
         }
         [HttpPut("{id}")]
-        public async Task<IActionResult> update(CustomerDTO model, string id)
+        public async Task<IActionResult> update([FromBody] CustomerDTO model, string id)
         {
            var User = await _service.Update(id, model);
             if (!User)

@@ -20,6 +20,11 @@ namespace Samkong.Service
         {
             return await _unit.Customer.GetCustomers();
         }
+        public async Task<IEnumerable<Customer>> getAllDdl()
+        {
+            var query = await _unit.Customer.GetCustomersSearch();
+            return await query.OrderBy(x=>x.Name).ToListAsync();
+        }
         public async Task<IEnumerable<Customer>> GetAllSearch(CustomerDTOSearch model)
         {
             var query = await _unit.Customer.GetCustomersSearch();
